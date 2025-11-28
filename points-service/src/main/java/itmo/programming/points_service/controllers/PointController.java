@@ -26,7 +26,7 @@ public class PointController {
     @GetMapping
     public ResponseEntity<PointsListResponseDTO> getPoints(
             @RequestParam(value = "r", required = false) BigDecimal radius,
-            @RequestHeader("X-User-Id") Integer userId
+            @RequestHeader("X-User-Id") Long userId
     ){
         if (radius != null) {
             return ResponseEntity.ok(
@@ -42,7 +42,7 @@ public class PointController {
     @PostMapping
     public ResponseEntity<NewInvalidPointsResponseDTO> addPoints(
             PointsListRequestDTO pointsListRequestDTO,
-            @RequestHeader("X-User-Id") Integer userId
+            @RequestHeader("X-User-Id") Long userId
     ){
         return ResponseEntity.ok(
                 pointService.addPoints(userId, pointsListRequestDTO.getPoints())
@@ -52,7 +52,7 @@ public class PointController {
     @DeleteMapping
     public ResponseEntity<Void> deletePoints(
             PointsDeleteRequestDTO pointsDeleteRequestDTO,
-            @RequestHeader("X-User-Id") Integer userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         pointService.deletePoints(userId, pointsDeleteRequestDTO.getPoints());
         return ResponseEntity.ok().build();
