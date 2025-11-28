@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PointService {
@@ -60,6 +61,7 @@ public class PointService {
         );
     }
 
+    @Transactional
     public NewInvalidPointsResponseDTO addPoints(Long ownerId, List<PointRequestDTO> points) {
 
         List<InvalidPointResponseDTO> invalidPoints = points.stream()
@@ -101,14 +103,13 @@ public class PointService {
         );
     }
 
+    @Transactional
     public void deletePoints(Long ownerId, List<Long> pointsId) {
 
-        List<PointEntity> ownerPoints = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
-
-        List<PointEntity> pointsToDelete = ownerPoints.stream()
-                .filter(p -> pointsId.contains(p.getId()))
-                .toList();
-
+        List<PointEntity> pointsToDelete = pointRepository.findByDeleteIdInAndOwnerId(
+                pointsId,
+                ownerId
+        );
 
         if (pointsToDelete.isEmpty()) {
             throw new NoSuchElementException("No available points");
