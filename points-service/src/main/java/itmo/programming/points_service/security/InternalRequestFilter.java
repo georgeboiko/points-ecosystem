@@ -17,8 +17,10 @@ public class InternalRequestFilter extends OncePerRequestFilter {
         String userIdHeader = request.getHeader("X-User-Id");
 
         try {
-            if (!internalHeader.equalsIgnoreCase("true") ||
-                Integer.parseInt(userIdHeader) <= 0) {
+            if (internalHeader == null ||
+                !internalHeader.equalsIgnoreCase("true") ||
+                Integer.parseInt(userIdHeader) <= 0
+            ) {
                 abortWithUnauthorized(response);
                 return;
             }
