@@ -7,6 +7,7 @@ import itmo.programming.points_service.dtos.responses.PointResponseDTO;
 import itmo.programming.points_service.dtos.responses.PointsDeleteResponseDTO;
 import itmo.programming.points_service.dtos.responses.PointsListResponseDTO;
 import itmo.programming.points_service.entities.PointEntity;
+import itmo.programming.points_service.kafka.producers.KafkaEventProducer;
 import itmo.programming.points_service.models.Point;
 import itmo.programming.points_service.repositories.PointRepository;
 import itmo.programming.points_service.utils.PointCalculator;
@@ -15,17 +16,23 @@ import itmo.programming.points_service.utils.mappers.PointMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PointService {
 
-    @Autowired
-    private PointRepository pointRepository;
+    private final PointRepository pointRepository;
+    private final PointMapper pointMapper;
+    private final KafkaEventProducer kafkaEventProducer;
 
-    @Autowired
-    private PointMapper pointMapper;
+    public PointService(PointRepository pointRepository,
+                        PointMapper pointMapper,
+                        KafkaEventProducer kafkaEventProducer) {
+        this.pointRepository = pointRepository;
+        this.pointMapper = pointMapper;
+        this.kafkaEventProducer = kafkaEventProducer;
+    }
+
 
     public PointsListResponseDTO getPoints(Long ownerId) {
         List<PointEntity> points = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
@@ -79,14 +86,15 @@ public class PointService {
                 .map(p -> pointMapper.toEntity(p, ownerId))
                 .toList();
 
-        //TODO: add kafka
-//        PointAddWebSocket.broadcastPoint(
-//                new PointsListResponseDTO(
-//                        pointRepository.save(calculatedPoints).stream()
-//                                .map(p -> new PointResponseDTO(p.getId(), p.getX(), p.getY(), p.getR(), p.isSuccess()))
-//                                .toList()
-//                )
-//        );
+        List<PointResponseDTO> savedPoints = pointRepository.saveAll(calculatedPoints).stream()
+                .map(p -> new PointResponseDTO(p.getId(), p.getX(), p.getY(), p.getR(), p.isSuccess()))
+                .toList();
+
+        kafkaEventProducer.sendPointAddedEvent(
+                new PointsListResponseDTO(
+                        savedPoints
+                )
+        );
 
         return new NewInvalidPointsResponseDTO(
                 invalidPoints
@@ -108,8 +116,7 @@ public class PointService {
 
         pointRepository.deleteAllInBatch(pointsToDelete);
 
-        //TODO: add kafka
-        //PointDeleteWebSocket.broadcastDeletePoint(new PointsDeleteResponseDTO(pointsToDelete.stream().map(PointEntity::getId).toList()));
+        kafkaEventProducer.sendPointsDeletedEvent(new PointsDeleteResponseDTO(pointsToDelete.stream().map(PointEntity::getId).toList()));
     }
 
 }
