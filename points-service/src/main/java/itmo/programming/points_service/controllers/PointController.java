@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +44,7 @@ public class PointController {
 
     @PostMapping
     public ResponseEntity<NewInvalidPointsResponseDTO> addPoints(
-            PointsListRequestDTO pointsListRequestDTO,
+            @RequestBody PointsListRequestDTO pointsListRequestDTO,
             @RequestHeader("X-User-Id") Long userId
     ){
         return ResponseEntity.ok(
@@ -53,7 +54,7 @@ public class PointController {
 
     @DeleteMapping
     public ResponseEntity<Void> deletePoints(
-            PointsDeleteRequestDTO pointsDeleteRequestDTO,
+            @RequestBody PointsDeleteRequestDTO pointsDeleteRequestDTO,
             @RequestHeader("X-User-Id") Long userId
     ) {
         pointService.deletePoints(userId, pointsDeleteRequestDTO.getPoints());
