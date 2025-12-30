@@ -7,6 +7,7 @@ import itmo.programming.points_service.dtos.responses.PointResponseDTO;
 import itmo.programming.points_service.dtos.responses.PointsDeleteResponseDTO;
 import itmo.programming.points_service.dtos.responses.PointsListResponseDTO;
 import itmo.programming.points_service.entities.PointEntity;
+import itmo.programming.points_service.exceptions.NoAvailablePointsException;
 import itmo.programming.points_service.kafka.producers.KafkaEventProducer;
 import itmo.programming.points_service.models.Point;
 import itmo.programming.points_service.repositories.PointRepository;
@@ -34,7 +35,6 @@ public class PointService {
         this.kafkaEventProducer = kafkaEventProducer;
     }
 
-
     public PointsListResponseDTO getPoints(Long ownerId) {
         List<PointEntity> points = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
         return new PointsListResponseDTO(
@@ -46,7 +46,6 @@ public class PointService {
     }
 
     public PointsListResponseDTO getPoints(Long ownerId, BigDecimal radius) {
-
         List<PointEntity> points = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
         return new PointsListResponseDTO(
                 points.stream()
@@ -63,7 +62,6 @@ public class PointService {
 
     @Transactional
     public NewInvalidPointsResponseDTO addPoints(Long ownerId, List<PointRequestDTO> points) {
-
         List<InvalidPointResponseDTO> invalidPoints = points.stream()
                 .map(p -> new InvalidPointResponseDTO(
                                 p.getX(),
@@ -105,14 +103,13 @@ public class PointService {
 
     @Transactional
     public void deletePoints(Long ownerId, List<Long> pointsId) {
-
         List<PointEntity> pointsToDelete = pointRepository.findByDeleteIdInAndOwnerId(
                 pointsId,
                 ownerId
         );
 
         if (pointsToDelete.isEmpty()) {
-            throw new NoSuchElementException("No available points");
+            throw new NoAvailablePointsException("No available points");
         }
 
         pointRepository.deleteAllInBatch(pointsToDelete);
