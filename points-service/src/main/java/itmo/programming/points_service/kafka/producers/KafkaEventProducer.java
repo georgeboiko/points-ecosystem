@@ -21,10 +21,18 @@ public class KafkaEventProducer {
         try {
             kafkaTemplate.send(POINTS_ADDED_TOPIC, pointsListResponseDTO)
                 .whenComplete((result, exception) -> {
+                    if (exception != null) {
+                        System.out.println(exception.getMessage());
+                    } else {
+                        System.out.println(
+                                "Message sent to topic " +
+                                        result.getRecordMetadata().topic()
+                        );
+                    }
 
                 });
         } catch (Exception e) {
-            System.out.println(String.format("Error sending points added event: {}", e.getMessage(), e));
+            System.out.println("Error sending points added event: " + e.getMessage());
         }
     }
 
