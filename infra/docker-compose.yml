@@ -71,7 +71,7 @@ services:
       POSTGRES_USER: ${AUTH_DB_USER}
       POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
     ports:
-      - "${AUTH_DB_PORT}:5433"
+      - "${AUTH_DB_PORT}:5432"
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
 
