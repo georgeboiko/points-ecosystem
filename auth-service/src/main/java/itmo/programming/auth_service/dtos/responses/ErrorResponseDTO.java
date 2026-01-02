@@ -1,11 +1,15 @@
 package itmo.programming.auth_service.dtos.responses;
 
-import java.util.List;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
 public class ErrorResponseDTO {
-    private List<String> message;
+    private Instant timestamp;
+    private int status;
+    private String error;
+    private String message;
+    private String path;
 }

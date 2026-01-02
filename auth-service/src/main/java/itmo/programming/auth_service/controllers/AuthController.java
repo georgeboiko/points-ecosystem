@@ -14,11 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -28,14 +29,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@Valid UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         authService.register(userRequestDTO.getEmail(), userRequestDTO.getPassword());
         return auth(userRequestDTO);
     }
 
     @PatchMapping("/email")
     public ResponseEntity<UserResponseDTO> changeEmail(@CookieValue("accessToken") String accessToken,
-                                @Valid ChangeEmailRequestDTO changeEmailRequestDTO) {
+                                @Valid @RequestBody ChangeEmailRequestDTO changeEmailRequestDTO) {
         TokenResponseDTO token = authService.changeEmail(accessToken, changeEmailRequestDTO.getEmail());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
@@ -45,7 +46,7 @@ public class AuthController {
 
     @PatchMapping("/password")
     public ResponseEntity<UserResponseDTO> changePassword(@CookieValue("accessToken") String accessToken,
-                                   @Valid ChangePasswordRequestDTO changePasswordRequestDTO) {
+                                   @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
         TokenResponseDTO token = authService.changePassword(accessToken, changePasswordRequestDTO.getPassword());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
@@ -54,7 +55,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> auth(@Valid UserRequestDTO userRequestDTO) {
+    public ResponseEntity<UserResponseDTO> auth(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         TokenResponseDTO token = authService.auth(userRequestDTO.getEmail(), userRequestDTO.getPassword());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
