@@ -56,7 +56,7 @@ public class AuthService {
         }
     }
 
-    public TokenResponseDTO changeEmail(String accessToken, String newEmail) {
+    public TokenResponseDTO changeEmail(String accessToken, String newEmail, Long userId) {
         try {
             String currentEmail = JwtUtils.getSubject(accessToken);
 
@@ -69,8 +69,8 @@ public class AuthService {
             }
 
             return new TokenResponseDTO(currentEmail,
-                    JwtUtils.generateAccessToken(new User(currentEmail, null)),
-                    JwtUtils.generateRefreshToken(new User(currentEmail, null))
+                    JwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
+                    JwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
             );
 
         } catch (JwtException | IllegalArgumentException | DataAccessException exception) {
@@ -78,7 +78,7 @@ public class AuthService {
         }
     }
 
-    public TokenResponseDTO changePassword(String accessToken, String newPassword) {
+    public TokenResponseDTO changePassword(String accessToken, String newPassword, Long userId) {
         try {
             String currentEmail = JwtUtils.getSubject(accessToken);
 
@@ -89,8 +89,8 @@ public class AuthService {
             }
 
             return new TokenResponseDTO(currentEmail,
-                    JwtUtils.generateAccessToken(new User(currentEmail, null)),
-                    JwtUtils.generateRefreshToken(new User(currentEmail, null))
+                    JwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
+                    JwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
             );
 
         } catch (JwtException | IllegalArgumentException | DataAccessException | NoSuchAlgorithmException exception) {

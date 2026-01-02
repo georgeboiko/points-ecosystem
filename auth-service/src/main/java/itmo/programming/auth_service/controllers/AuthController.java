@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +37,9 @@ public class AuthController {
 
     @PatchMapping("/email")
     public ResponseEntity<UserResponseDTO> changeEmail(@CookieValue("accessToken") String accessToken,
-                                @Valid @RequestBody ChangeEmailRequestDTO changeEmailRequestDTO) {
-        TokenResponseDTO token = authService.changeEmail(accessToken, changeEmailRequestDTO.getEmail());
+                                                       @Valid @RequestBody ChangeEmailRequestDTO changeEmailRequestDTO,
+                                                       @RequestHeader("X-User-Id") Long userId) {
+        TokenResponseDTO token = authService.changeEmail(accessToken, changeEmailRequestDTO.getEmail(), userId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
@@ -46,8 +48,9 @@ public class AuthController {
 
     @PatchMapping("/password")
     public ResponseEntity<UserResponseDTO> changePassword(@CookieValue("accessToken") String accessToken,
-                                   @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
-        TokenResponseDTO token = authService.changePassword(accessToken, changePasswordRequestDTO.getPassword());
+                                                          @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO,
+                                                          @RequestHeader("X-User-Id") Long userId) {
+        TokenResponseDTO token = authService.changePassword(accessToken, changePasswordRequestDTO.getPassword(), userId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
                 .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
