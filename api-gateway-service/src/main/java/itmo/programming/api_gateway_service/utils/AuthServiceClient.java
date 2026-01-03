@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthServiceClient {
 
+    private static final String CHECK_ENDPOINT = "http://localhost:8084/api/v1/auth/internal/token/validate";
+
     private final WebClient webClient;
 
     public AuthServiceClient(WebClient webClient) {
@@ -17,7 +19,7 @@ public class AuthServiceClient {
 
     public Mono<Boolean> isBlacklisted(String token, String tokenType) {
         return webClient.post()
-                .uri("/api/v1/auth/internal/token/validate")
+                .uri(CHECK_ENDPOINT)
                 .bodyValue(new TokenValidateRequestDTO(token, tokenType))
                 .retrieve()
                 .bodyToMono(Boolean.class)
