@@ -11,6 +11,12 @@ public class KafkaEventConsumer {
     private static final String POINTS_ADDED_TOPIC = "points-added";
     private static final String POINTS_DELETED_TOPIC = "points-deleted";
 
+    private final KafkaEventProducer kafkaEventProducer;
+
+    public KafkaEventConsumer(KafkaEventProducer kafkaEventProducer) {
+        this.kafkaEventProducer = kafkaEventProducer;
+    }
+
     @KafkaListener(
             topics = POINTS_ADDED_TOPIC,
             properties = {
@@ -18,7 +24,7 @@ public class KafkaEventConsumer {
             }
     )
     public void consumeAddedPoints(PointsAddedEvent pointsAddedEvent) {
-        System.out.println(pointsAddedEvent.toString());
+        kafkaEventProducer.sendPointAddedEvent(pointsAddedEvent);
     }
 
     @KafkaListener(
@@ -28,7 +34,7 @@ public class KafkaEventConsumer {
             }
     )
     public void consumeDeletedPoints(PointsDeletedEvent pointsDeletedEvent) {
-        System.out.println(pointsDeletedEvent.toString());
+        kafkaEventProducer.sendPointsDeletedEvent(pointsDeletedEvent);
     }
 
 }
