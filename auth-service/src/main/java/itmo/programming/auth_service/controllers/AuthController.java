@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final CookieMaker cookieMaker;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, CookieMaker cookieMaker) {
         this.authService = authService;
+        this.cookieMaker = cookieMaker;
     }
 
     @PostMapping("/register")
@@ -42,8 +44,8 @@ public class AuthController {
                                                        @RequestHeader("X-User-Id") Long userId) {
         TokenResponseDTO token = authService.changeEmail(accessToken, changeEmailRequestDTO.getEmail(), userId);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
                 .body(new UserResponseDTO(token.getEmail()));
     }
 
@@ -53,8 +55,8 @@ public class AuthController {
                                                           @RequestHeader("X-User-Id") Long userId) {
         TokenResponseDTO token = authService.changePassword(accessToken, changePasswordRequestDTO.getPassword(), userId);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
                 .body(new UserResponseDTO(token.getEmail()));
     }
 
@@ -62,8 +64,8 @@ public class AuthController {
     public ResponseEntity<UserResponseDTO> auth(@Valid @RequestBody UserRequestDTO userRequestDTO) {
         TokenResponseDTO token = authService.auth(userRequestDTO.getEmail(), userRequestDTO.getPassword());
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
                 .body(new UserResponseDTO(token.getEmail()));
     }
 
@@ -71,8 +73,8 @@ public class AuthController {
     public ResponseEntity<MessageResponseDTO> refresh(@CookieValue("refreshToken") String refreshToken) {
         TokenResponseDTO token = authService.refresh(refreshToken);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createAccessTokenCookie(token.getAccessToken()).toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createRefreshTokenCookie(token.getRefreshToken()).toString())
                 .body(new MessageResponseDTO("tokens refreshed"));
     }
 
@@ -81,8 +83,8 @@ public class AuthController {
                            @CookieValue("refreshToken") String refreshToken) {
         authService.logout(accessToken, refreshToken);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createExpiredAccessTokenCookie().toString())
-                .header(HttpHeaders.SET_COOKIE, CookieMaker.createExpiredRefreshTokenCookie().toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createExpiredAccessTokenCookie().toString())
+                .header(HttpHeaders.SET_COOKIE, cookieMaker.createExpiredRefreshTokenCookie().toString())
                 .body(new MessageResponseDTO("logout successful"));
     }
 
