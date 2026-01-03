@@ -21,9 +21,11 @@ public class JwtAuthFilter implements WebFilter {
     private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh");
 
     private final AuthServiceClient authServiceClient;
+    private final JwtUtils jwtUtils;
 
-    public JwtAuthFilter(AuthServiceClient authServiceClient) {
+    public JwtAuthFilter(AuthServiceClient authServiceClient, JwtUtils jwtUtils) {
         this.authServiceClient = authServiceClient;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class JwtAuthFilter implements WebFilter {
         String token = accessTokenCookie.getValue();
 
         try {
-            Claims claims = JwtUtils.parseToken(token);
+            Claims claims = jwtUtils.parseToken(token);
             String tokenType = (String) claims.get("type");
 
             if (!tokenType.equals(ACCESS_TYPE)) {
