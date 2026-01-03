@@ -38,6 +38,7 @@ public class PointService {
     public PointsListResponseDTO getPoints(Long ownerId) {
         List<PointEntity> points = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
         return new PointsListResponseDTO(
+                ownerId,
                 points.stream()
                         .map(pointMapper::toModel)
                         .map(pointMapper::toResponseDTO)
@@ -48,6 +49,7 @@ public class PointService {
     public PointsListResponseDTO getPoints(Long ownerId, BigDecimal radius) {
         List<PointEntity> points = pointRepository.findByOwnerIdOrderByIdAsc(ownerId);
         return new PointsListResponseDTO(
+                ownerId,
                 points.stream()
                         .map(p -> new PointResponseDTO(
                                         p.getId(),
@@ -92,6 +94,7 @@ public class PointService {
 
         kafkaEventProducer.sendPointAddedEvent(
                 new PointsListResponseDTO(
+                        ownerId,
                         savedPoints
                 )
         );
@@ -114,7 +117,11 @@ public class PointService {
 
         pointRepository.deleteAllInBatch(pointsToDelete);
 
-        kafkaEventProducer.sendPointsDeletedEvent(new PointsDeleteResponseDTO(pointsToDelete.stream().map(PointEntity::getId).toList()));
+        kafkaEventProducer.sendPointsDeletedEvent(
+                new PointsDeleteResponseDTO(
+                        ownerId,
+                        pointsToDelete.stream().map(PointEntity::getId).toList())
+        );
     }
 
 }
