@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_PATHS = {"/login", "/register", "/refresh"};
+    private static final String[] PUBLIC_PATHS = {"/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh"};
     private static final String AUTH_SERVICE_URL = "http://localhost:8084";
 
     @Bean
