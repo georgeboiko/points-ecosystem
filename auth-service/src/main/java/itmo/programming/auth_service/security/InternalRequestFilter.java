@@ -9,10 +9,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class InternalRequestFilter extends OncePerRequestFilter {
 
+    private static final String PUBLIC_PATH = "/api/v1/auth/internal/token/validate";
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI().equals(PUBLIC_PATH)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String internalHeader = request.getHeader("X-Internal-Request");
         String userIdHeader = request.getHeader("X-User-Id");
 
