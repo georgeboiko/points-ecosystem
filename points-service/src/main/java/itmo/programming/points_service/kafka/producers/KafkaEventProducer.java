@@ -39,11 +39,19 @@ public class KafkaEventProducer {
     public void sendPointsDeletedEvent(PointsDeleteResponseDTO pointsDeleteResponseDTO) {
         try {
             kafkaTemplate.send(POINTS_DELETED_TOPIC, pointsDeleteResponseDTO)
-                .whenComplete((result, exception) -> {
+                    .whenComplete((result, exception) -> {
+                        if (exception != null) {
+                            System.out.println(exception.getMessage());
+                        } else {
+                            System.out.println(
+                                    "Message sent to topic " +
+                                            result.getRecordMetadata().topic()
+                            );
+                        }
 
-                });
+                    });
         } catch (Exception e) {
-            System.out.println(String.format("Error sending points deleted event: {}", e.getMessage(), e));
+            System.out.println("Error sending points deleted event: " + e.getMessage());
         }
     }
 

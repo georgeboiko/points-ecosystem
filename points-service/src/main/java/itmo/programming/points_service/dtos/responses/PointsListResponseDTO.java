@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class PointsListResponseDTO {
+    private Long userId;
     private List<PointResponseDTO> validPoints;
 }
