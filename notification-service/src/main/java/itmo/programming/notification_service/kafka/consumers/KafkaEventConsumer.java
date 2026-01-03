@@ -2,6 +2,7 @@ package itmo.programming.notification_service.kafka.consumers;
 
 import itmo.programming.notification_service.kafka.events.PointsAddedEvent;
 import itmo.programming.notification_service.kafka.events.PointsDeletedEvent;
+import itmo.programming.notification_service.kafka.producers.KafkaEventProducer;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
