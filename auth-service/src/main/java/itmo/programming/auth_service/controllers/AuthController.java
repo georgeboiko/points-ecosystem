@@ -2,6 +2,7 @@ package itmo.programming.auth_service.controllers;
 
 import itmo.programming.auth_service.dtos.requests.ChangeEmailRequestDTO;
 import itmo.programming.auth_service.dtos.requests.ChangePasswordRequestDTO;
+import itmo.programming.auth_service.dtos.requests.TokenValidateRequestDTO;
 import itmo.programming.auth_service.dtos.requests.UserRequestDTO;
 import itmo.programming.auth_service.dtos.responses.TokenResponseDTO;
 import itmo.programming.auth_service.dtos.responses.UserResponseDTO;
@@ -89,6 +90,13 @@ public class AuthController {
     public ResponseEntity<UserResponseDTO> me(@CookieValue("accessToken") String accessToken) {
         return ResponseEntity.ok(
                 authService.me(accessToken)
+        );
+    }
+
+    @PostMapping("/internal/token/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestBody TokenValidateRequestDTO tokenValidateRequestDTO) {
+        return ResponseEntity.ok(
+                authService.isBlacklisted(tokenValidateRequestDTO.getToken(), tokenValidateRequestDTO.getTokenType())
         );
     }
 
