@@ -18,19 +18,18 @@ public class JwtAuthFilter implements WebFilter {
 
     private static final String ACCESS_TYPE = "access";
     private static final String REFRESH_TYPE = "refresh";
+    private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh");
 
-    private final List<String> publicPaths;
     private final AuthServiceClient authServiceClient;
 
-    public JwtAuthFilter(String[] publicPaths, AuthServiceClient authServiceClient) {
-        this.publicPaths = List.of(publicPaths);
+    public JwtAuthFilter(AuthServiceClient authServiceClient) {
         this.authServiceClient = authServiceClient;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
-        if (publicPaths.contains(path)) {
+        if (PUBLIC_PATHS.contains(path)) {
             return chain.filter(exchange);
         }
 
