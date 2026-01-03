@@ -33,14 +33,17 @@ public class AuthService {
     private final UserRepository userRepository;
     private final TokenBlackListRepository tokenBlackListRepository;
     private final UserMapper userMapper;
+    private final JwtUtils jwtUtils;
 
     public AuthService(UserRepository userRepository,
                        TokenBlackListRepository tokenBlackListRepository,
-                       UserMapper userMapper
+                       UserMapper userMapper,
+                       JwtUtils jwtUtils
     ) {
         this.userRepository = userRepository;
         this.tokenBlackListRepository = tokenBlackListRepository;
         this.userMapper = userMapper;
+        this.jwtUtils = jwtUtils;
     }
 
     public void register(String email, String password) throws UserRegistrationException {
@@ -58,7 +61,7 @@ public class AuthService {
 
     public TokenResponseDTO changeEmail(String accessToken, String newEmail, Long userId) {
         try {
-            String currentEmail = JwtUtils.getSubject(accessToken);
+            String currentEmail = jwtUtils.getSubject(accessToken);
 
             if (newEmail != null) {
                 String finalCurrentEmail = currentEmail;
@@ -69,8 +72,8 @@ public class AuthService {
             }
 
             return new TokenResponseDTO(currentEmail,
-                    JwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
-                    JwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
+                    jwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
+                    jwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
             );
 
         } catch (JwtException | IllegalArgumentException | DataAccessException exception) {
@@ -80,7 +83,7 @@ public class AuthService {
 
     public TokenResponseDTO changePassword(String accessToken, String newPassword, Long userId) {
         try {
-            String currentEmail = JwtUtils.getSubject(accessToken);
+            String currentEmail = jwtUtils.getSubject(accessToken);
 
             if (newPassword != null) {
                 UserEntity user = userRepository.findByEmail(currentEmail)
@@ -89,8 +92,8 @@ public class AuthService {
             }
 
             return new TokenResponseDTO(currentEmail,
-                    JwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
-                    JwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
+                    jwtUtils.generateAccessToken(new User(userId, currentEmail, null)),
+                    jwtUtils.generateRefreshToken(new User(userId, currentEmail, null))
             );
 
         } catch (JwtException | IllegalArgumentException | DataAccessException | NoSuchAlgorithmException exception) {
@@ -108,7 +111,7 @@ public class AuthService {
             if (user == null ||!PasswordUtils.verify(user.getPasswordHash(), password)) {
                 throw new UserAuthorizationException("Invalid email or password");
             }
-            return new TokenResponseDTO(user.getEmail(), JwtUtils.generateAccessToken(user), JwtUtils.generateRefreshToken(user));
+            return new TokenResponseDTO(user.getEmail(), jwtUtils.generateAccessToken(user), jwtUtils.generateRefreshToken(user));
         } catch (NoSuchAlgorithmException | DataAccessException exception) {
             throw new UserAuthorizationException("Authorization failed, please retry", exception);
         }
@@ -116,21 +119,21 @@ public class AuthService {
 
     public TokenResponseDTO refresh(String refreshToken) throws RefreshException {
         try {
-            if (!JwtUtils.isRefreshToken(refreshToken) || isBlacklisted(refreshToken, ACCESS_TYPE)) {
+            if (!jwtUtils.isRefreshToken(refreshToken) || isBlacklisted(refreshToken, ACCESS_TYPE)) {
                 throw new RefreshException("Invalid or expired refresh token");
             }
 
-            blacklistToken(refreshToken,REFRESH_TYPE, JwtUtils.getExpirationTime(refreshToken).getTime());
+            blacklistToken(refreshToken,REFRESH_TYPE, jwtUtils.getExpirationTime(refreshToken).getTime());
 
-            String currentEmail = JwtUtils.getSubject(refreshToken);
+            String currentEmail = jwtUtils.getSubject(refreshToken);
 
             UserEntity userEntity = userRepository.findByEmail(currentEmail)
                     .orElseThrow(() -> new UserNotFoundException("User not found: " + currentEmail));
 
             User user = userMapper.toModel(userEntity);
 
-            String newAccess = JwtUtils.generateAccessToken(user);
-            String newRefresh = JwtUtils.generateRefreshToken(user);
+            String newAccess = jwtUtils.generateAccessToken(user);
+            String newRefresh = jwtUtils.generateRefreshToken(user);
 
             return new TokenResponseDTO(null, newAccess, newRefresh);
         } catch (DataAccessException exception) {
@@ -142,8 +145,8 @@ public class AuthService {
 
     public void logout(String accessToken, String refreshToken) {
         try {
-            blacklistToken(accessToken, ACCESS_TYPE, JwtUtils.getExpirationTime(accessToken).getTime());
-            blacklistToken(refreshToken, REFRESH_TYPE, JwtUtils.getExpirationTime(refreshToken).getTime());
+            blacklistToken(accessToken, ACCESS_TYPE, jwtUtils.getExpirationTime(accessToken).getTime());
+            blacklistToken(refreshToken, REFRESH_TYPE, jwtUtils.getExpirationTime(refreshToken).getTime());
         } catch (DataAccessException exception) {
             throw new LogOutException("LogOut failed, please retry", exception);
         }
@@ -151,7 +154,7 @@ public class AuthService {
 
     public UserResponseDTO me(String accessToken) {
         try {
-            return new UserResponseDTO(JwtUtils.getSubject(accessToken));
+            return new UserResponseDTO(jwtUtils.getSubject(accessToken));
         } catch (JwtException | IllegalArgumentException exception) {
             throw new UserAuthorizationException("Invalid or expired token", exception);
         }
