@@ -7,6 +7,10 @@ import java.util.List;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -58,6 +62,13 @@ public class JwtAuthFilter implements WebFilter {
                             return abortWithUnauthorized(exchange);
                         }
 
+                        Authentication authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userId,
+                                        null,
+                                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                                );
+
                         ServerHttpRequest mutatedRequest = exchange.getRequest()
                                 .mutate()
                                 .header("X-User-Id", userId)
@@ -68,7 +79,9 @@ public class JwtAuthFilter implements WebFilter {
                                 .request(mutatedRequest)
                                 .build();
 
-                        return chain.filter(mutatedExchange);
+                        return chain.filter(mutatedExchange)
+                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication)
+                                );
 
                     });
 
