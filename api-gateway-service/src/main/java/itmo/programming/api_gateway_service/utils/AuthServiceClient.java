@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthServiceClient {
 
-    private static final String CHECK_ENDPOINT = "http://localhost:8084/api/v1/auth/internal/token/validate";
+    private static final String CHECK_ENDPOINT = "/api/v1/auth/internal/token/validate";
 
     private final WebClient webClient;
 
