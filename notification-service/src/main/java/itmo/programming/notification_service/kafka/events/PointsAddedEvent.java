@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PointsAddedEvent {
+    private Long userId;
     private List<PointDTO> validPoints;
 }

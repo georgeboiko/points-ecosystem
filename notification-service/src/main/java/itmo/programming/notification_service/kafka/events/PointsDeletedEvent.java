@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class PointsDeletedEvent {
+    private Long userId;
     private List<Long> points;
 }
