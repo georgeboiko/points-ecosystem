@@ -176,7 +176,7 @@ public class AuthService {
         }
     }
 
-    private boolean isBlacklisted(String token, String tokenType) {
+    public boolean isBlacklisted(String token, String tokenType) {
         try {
             String tokenHash = PasswordUtils.hash(token);
             return tokenBlackListRepository.existsByTokenHashAndTokenTypeAndExpiresAtAfter(
@@ -187,6 +187,11 @@ public class AuthService {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Token hashing failed", e);
         }
+    }
+
+    @Transactional
+    public void cleanupExpiredTokens() {
+        tokenBlackListRepository.deleteByExpiresAtBefore(Instant.now());
     }
 
 }
