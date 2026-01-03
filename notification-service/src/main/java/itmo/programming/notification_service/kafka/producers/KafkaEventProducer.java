@@ -1,4 +1,4 @@
-package itmo.programming.notification_service.kafka.consumers;
+package itmo.programming.notification_service.kafka.producers;
 
 import itmo.programming.notification_service.kafka.events.PointsAddedEvent;
 import itmo.programming.notification_service.kafka.events.PointsDeletedEvent;
