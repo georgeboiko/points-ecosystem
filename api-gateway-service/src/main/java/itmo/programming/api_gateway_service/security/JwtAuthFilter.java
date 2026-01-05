@@ -36,7 +36,16 @@ public class JwtAuthFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
         if (PUBLIC_PATHS.contains(path)) {
-            return chain.filter(exchange);
+            ServerHttpRequest mutatedRequest = exchange.getRequest()
+                    .mutate()
+                    .header("X-Internal-Request", "true")
+                    .build();
+
+            ServerWebExchange mutatedExchange = exchange.mutate()
+                    .request(mutatedRequest)
+                    .build();
+
+            return chain.filter(mutatedExchange);
         }
 
         HttpCookie accessTokenCookie = exchange.getRequest().getCookies().getFirst("accessToken");

@@ -4,6 +4,20 @@ server:
 spring:
   application:
     name: api-gateway-service
+  kafka:
+    consumer:
+      group-id: api-gateway-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: itmo.programming.*
+            use:
+              type:
+                headers: false
+    bootstrap-servers: ${KAFKA_URL}
   cloud:
     gateway:
       server:
