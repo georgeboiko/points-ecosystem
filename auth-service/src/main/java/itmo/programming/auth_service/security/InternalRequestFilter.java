@@ -7,15 +7,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class InternalRequestFilter extends OncePerRequestFilter {
 
-    @Value("${auth-service.check-endpoint}")
-    private String EXTERNAL_PATH;
+    private final String EXTERNAL_PATH;
+    private final List<String> PUBLIC_PATHS;
 
-    @Value("${auth-service.public-paths}")
-    private List<String> PUBLIC_PATHS;
+    public InternalRequestFilter(String EXTERNAL_PATH, List<String> PUBLIC_PATHS) {
+        this.EXTERNAL_PATH = EXTERNAL_PATH;
+        this.PUBLIC_PATHS = PUBLIC_PATHS;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
