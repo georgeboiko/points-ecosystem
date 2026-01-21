@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class InternalRequestFilter extends OncePerRequestFilter {
 
     @Value("${auth-service.check-endpoint}")
-    private List<String> EXTERNAL_PATHS;
+    private String EXTERNAL_PATH;
 
     @Value("${auth-service.public-paths}")
     private List<String> PUBLIC_PATHS;
@@ -21,7 +21,7 @@ public class InternalRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        if (EXTERNAL_PATHS.contains(request.getRequestURI())) {
+        if (EXTERNAL_PATH.equalsIgnoreCase(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
