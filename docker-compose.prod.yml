@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  gateway:
+    build: ./api-gateway-service
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env.services.prod
+    depends_on:
+      - auth-service
+      - points-service
+    networks:
+      - backend
+
+  auth-service:
+    build: ./auth-service
+    env_file:
+      - .env.services.prod
+    networks:
+      - backend
+
+  points-service:
+    build: ./points-service
+    env_file:
+      - .env.services.prod
+    networks:
+      - backend
+
+  notification-service:
+    build: ./notification-service
+    env_file:
+      - .env.services.prod
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
