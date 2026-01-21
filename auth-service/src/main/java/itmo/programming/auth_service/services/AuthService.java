@@ -154,7 +154,7 @@ public class AuthService {
 
     public UserResponseDTO me(String accessToken) {
         try {
-            return new UserResponseDTO(jwtUtils.getSubject(accessToken));
+            return new UserResponseDTO((String) jwtUtils.parseToken(accessToken).get("email"));
         } catch (JwtException | IllegalArgumentException exception) {
             throw new UserAuthorizationException("Invalid or expired token", exception);
         }

@@ -5,11 +5,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleValidationException(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(
+                        Instant.now(),
+                        400,
+                        "BAD_REQUEST",
+                        exception.getFieldError().getDefaultMessage(),
+                        request.getRequestURI()
+                ));
+    }
 
     @ExceptionHandler(LogOutException.class)
     public ResponseEntity<ErrorResponseDTO> handleLogOutException(
