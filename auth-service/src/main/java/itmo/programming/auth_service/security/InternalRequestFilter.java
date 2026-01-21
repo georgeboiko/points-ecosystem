@@ -6,12 +6,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class InternalRequestFilter extends OncePerRequestFilter {
 
-    private static final List<String> EXTERNAL_PATHS = List.of("/api/v1/auth/internal/token/validate");
-    private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh");
+    @Value("${auth-service.check-endpoint}")
+    private List<String> EXTERNAL_PATHS;
+
+    @Value("${auth-service.public-paths}")
+    private List<String> PUBLIC_PATHS;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
