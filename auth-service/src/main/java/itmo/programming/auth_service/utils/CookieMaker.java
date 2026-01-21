@@ -17,6 +17,12 @@ public class CookieMaker {
     @Value("${jwt.refresh.expiration-time}")
     private String refreshExpirationTimeStr;
 
+    @Value("${auth-service.cookie.secure}")
+    private boolean secureCookie;
+
+    @Value("${auth-service.cookie.same-site}")
+    private String sameSite;
+
     @PostConstruct
     private void init() {
         try {
@@ -42,8 +48,8 @@ public class CookieMaker {
                 .path("/")
                 .maxAge((int) (ACCESS_EXPIRATION_TIME / 1000))
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(secureCookie)
+                .sameSite(sameSite)
                 .build();
     }
 
@@ -52,8 +58,8 @@ public class CookieMaker {
                 .path("/")
                 .maxAge((int) (REFRESH_EXPIRATION_TIME / 1000))
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(secureCookie)
+                .sameSite(sameSite)
                 .build();
     }
 
@@ -62,8 +68,8 @@ public class CookieMaker {
                 .path("/")
                 .maxAge(0)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(secureCookie)
+                .sameSite(sameSite)
                 .build();
     }
 
@@ -72,8 +78,8 @@ public class CookieMaker {
                 .path("/")
                 .maxAge(0)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
+                .secure(secureCookie)
+                .sameSite(sameSite)
                 .build();
     }
 }
