@@ -1,6 +1,7 @@
 package itmo.programming.api_gateway_service.security;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -16,8 +17,20 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC_PATHS = {"/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh"};
-    private static final String AUTH_SERVICE_URL = "http://localhost:8084";
+    @Value("${auth-service.public-paths}")
+    private String[] PUBLIC_PATHS;
+
+    @Value("${auth-service.url}")
+    private String AUTH_SERVICE_URL;
+
+    @Value("${cors.allowed-origins}")
+    private List<String> ALLOWED_ORIGINS;
+
+    @Value("${cors.allowed-methods}")
+    private List<String> ALLOWED_METHODS;
+
+    @Value("${cors.allowed-headers}")
+    private List<String> ALLOWED_HEADERS;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
@@ -40,13 +53,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
-        ));
-        config.setAllowedHeaders(List.of(
-                "Content-Type", "Authorization", "X-Requested-With"
-        ));
+        config.setAllowedOrigins(ALLOWED_ORIGINS);
+        config.setAllowedMethods(ALLOWED_METHODS);
+        config.setAllowedHeaders(ALLOWED_HEADERS);
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =

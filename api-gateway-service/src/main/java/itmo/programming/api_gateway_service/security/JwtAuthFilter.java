@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import itmo.programming.api_gateway_service.utils.AuthServiceClient;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -22,7 +23,9 @@ public class JwtAuthFilter implements WebFilter {
 
     private static final String ACCESS_TYPE = "access";
     private static final String REFRESH_TYPE = "refresh";
-    private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh");
+
+    @Value("${auth-service.public-paths}")
+    private List<String> PUBLIC_PATHS;
 
     private final AuthServiceClient authServiceClient;
     private final JwtUtils jwtUtils;
