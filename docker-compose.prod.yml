@@ -2,7 +2,11 @@ version: "3.8"
 
 services:
   gateway:
-    build: ./api-gateway-service
+    build:
+      context: ./api-gateway-service
+      args:
+        BASE_IMAGE: ${BASE_IMAGE}
+    image: username/api-gateway-service:${TAG}
     ports:
       - "8888:8888"
     env_file:
@@ -14,21 +18,33 @@ services:
       - backend
 
   auth-service:
-    build: ./auth-service
+    build:
+      context: ./auth-service
+      args:
+        BASE_IMAGE: ${BASE_IMAGE}
+    image: username/auth-service:${TAG}
     env_file:
       - .env.services.prod
     networks:
       - backend
 
   points-service:
-    build: ./points-service
+    build:
+      context: ./points-service
+      args:
+        BASE_IMAGE: ${BASE_IMAGE}
+    image: username/points-service:${TAG}
     env_file:
       - .env.services.prod
     networks:
       - backend
 
   notification-service:
-    build: ./notification-service
+    build:
+      context: ./notification-service
+      args:
+        BASE_IMAGE: ${BASE_IMAGE}
+    image: username/notification-service:${TAG}
     env_file:
       - .env.services.prod
     networks:
