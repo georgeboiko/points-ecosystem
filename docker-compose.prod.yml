@@ -8,8 +8,9 @@ services:
         BASE_IMAGE: ${BASE_IMAGE}
     image: ${DOCKER_USERNAME}/api-gateway-service:${IMAGE_TAG}
     ports:
-      - "8888:8888"      
-
+      - "8888:8888"
+    env_file:
+      - .env.services.prod
     depends_on:
       - auth-service
       - points-service
@@ -22,6 +23,8 @@ services:
       args:
         BASE_IMAGE: ${BASE_IMAGE}
     image: ${DOCKER_USERNAME}/auth-service:${IMAGE_TAG}
+    env_file:
+      - .env.services.prod
     networks:
       - backend
 
@@ -31,6 +34,8 @@ services:
       args:
         BASE_IMAGE: ${BASE_IMAGE}
     image: ${DOCKER_USERNAME}/points-service:${IMAGE_TAG}
+    env_file:
+      - .env.services.prod
     networks:
       - backend
 
@@ -40,6 +45,8 @@ services:
       args:
         BASE_IMAGE: ${BASE_IMAGE}
     image: ${DOCKER_USERNAME}/notification-service:${IMAGE_TAG}
+    env_file:
+      - .env.services.prod
     networks:
       - backend
 
