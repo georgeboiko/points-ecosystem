@@ -1,14 +1,38 @@
 name: backend deploy
-on: [push]
+on:
+  push:
+    branches: [master]
+  pull-requests:
+    branches: [master]
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "hello user! it is test"
-      - run: echo "my repo is ${{ github.repository }}"
-      - name: Check out repository code
+      - name: Check out code
         uses: actions/checkout@v5
-      - run: echo "code was clonned to the runner"
-      - name: List files in the repository
-        run: ls ${{ github.workspace }}
-      - run: echo "job status is ${{ job.status }}"
+
+      - name: Setup Java environment
+        uses: actions/setup-java@v4
+        with: 
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar --no-daemon
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-microservices-jars
+          path: |
+            **/build/libs/*.jar
+            !**/build/libs/*-plain.jar
+          if-no-files-found: error
+          retention-days: 30

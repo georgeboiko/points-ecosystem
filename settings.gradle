@@ -1,0 +1,6 @@
+rootProject.name = 'microservices-monorepo'
+
+include ':auth-service'
+include ':points-service'
+include ':api-gateway-service'
+include ':notification-service'
