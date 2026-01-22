@@ -4,7 +4,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo hello user! it's test
+      - run: echo hello user! it is test
       - run: my repo is ${{ github.repository }}
       - name: Check out repository code
         uses: actions/checkout@v5
