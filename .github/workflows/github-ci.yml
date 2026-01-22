@@ -4,11 +4,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo hello user! it is test
-      - run: my repo is ${{ github.repository }}
+      - run: echo "hello user! it is test"
+      - run: echo "my repo is ${{ github.repository }}"
       - name: Check out repository code
         uses: actions/checkout@v5
-      - run: echo code was clonned to the runner
+      - run: echo "code was clonned to the runner"
       - name: List files in the repository
         run: ls ${{ github.workspace }}
-      - run: job status is ${{ job.status }}
+      - run: echo "job status is ${{ job.status }}"
