@@ -2,6 +2,25 @@ env:
   IMAGE_TAG: ${{ github.sha }}
   BASE_IMAGE: ${{ secrets.DOCKER_USERNAME }}/common-base:${{ github.sha }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  ACCESS_EXPIRATION_TIME: ${{ secrets.ACCESS_EXPIRATION_TIME }}
+  REFRESH_EXPIRATION_TIME: ${{ secrets.REFRESH_EXPIRATION_TIME }}
+
+  AUTH_DB_USER: ${{ secrets.AUTH_DB_USER }}
+  AUTH_DB_PASSWORD: ${{ secrets.AUTH_DB_PASSWORD }}
+  AUTH_DB_URL: ${{ secrets.AUTH_DB_URL }}
+
+  POINTS_DB_USER: ${{ secrets.POINTS_DB_USER }}
+  POINTS_DB_PASSWORD: ${{ secrets.POINTS_DB_PASSWORD }}
+  POINTS_DB_URL: ${{ secrets.POINTS_DB_URL }}
+
+  KAFKA_URL: ${{ secrets.KAFKA_URL }}
+  AUTH_SERVICE_URL: ${{ secrets.AUTH_SERVICE_URL }}
+  POINTS_SERVICE_URL: ${{ secrets.POINTS_SERVICE_URL }}
+  ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+
+  COOKIE_SECURE: ${{ secrets.COOKIE_SECURE }}
+  COOKIE_SAME_SITE: ${{ secrets.COOKIE_SAME_SITE }}
 
 name: backend deploy
 on:
