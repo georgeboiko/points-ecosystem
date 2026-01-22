@@ -6,7 +6,7 @@ services:
       context: ./api-gateway-service
       args:
         BASE_IMAGE: ${BASE_IMAGE}
-    image: username/api-gateway-service:${TAG}
+    image: ${{ secrets.DOCKER_USERNAME }}/api-gateway-service:${TAG}
     ports:
       - "8888:8888"
     env_file:
@@ -22,7 +22,7 @@ services:
       context: ./auth-service
       args:
         BASE_IMAGE: ${BASE_IMAGE}
-    image: username/auth-service:${TAG}
+    image: ${{ secrets.DOCKER_USERNAME }}/auth-service:${TAG}
     env_file:
       - .env.services.prod
     networks:
@@ -33,7 +33,7 @@ services:
       context: ./points-service
       args:
         BASE_IMAGE: ${BASE_IMAGE}
-    image: username/points-service:${TAG}
+    image: ${{ secrets.DOCKER_USERNAME }}/points-service:${TAG}
     env_file:
       - .env.services.prod
     networks:
@@ -44,7 +44,7 @@ services:
       context: ./notification-service
       args:
         BASE_IMAGE: ${BASE_IMAGE}
-    image: username/notification-service:${TAG}
+    image: ${{ secrets.DOCKER_USERNAME }}/notification-service:${TAG}
     env_file:
       - .env.services.prod
     networks:

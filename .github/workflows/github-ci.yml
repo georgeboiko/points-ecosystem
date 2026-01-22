@@ -1,6 +1,6 @@
 env:
   IMAGE_TAG: ${{ github.sha }}
-  BASE_IMAGE: username/common-base:${{ github.sha }}
+  BASE_IMAGE: ${{ secrets.DOCKER_USERNAME }}/common-base:${{ github.sha }}
   TAG: ${{ github.sha }}
 
 name: backend deploy
@@ -63,10 +63,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build common-base
-        run: docker build -f Dockerfile.common -t username/common-base:${{ env.IMAGE_TAG }} .
+        run: docker build -f Dockerfile.common -t ${{ secrets.DOCKER_USERNAME }}/common-base:${{ env.IMAGE_TAG }} .
 
       - name: Push common-base
-        run: docker push username/common-base:${{ env.IMAGE_TAG }}
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/common-base:${{ env.IMAGE_TAG }}
 
       - name: Build microservices
         run: docker-compose -f docker-compose.prod.yml build --build-arg BASE_IMAGE=${BASE_IMAGE}
