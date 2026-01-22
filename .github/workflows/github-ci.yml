@@ -1,7 +1,7 @@
 env:
   IMAGE_TAG: ${{ github.sha }}
   BASE_IMAGE: ${{ secrets.DOCKER_USERNAME }}/common-base:${{ github.sha }}
-  TAG: ${{ github.sha }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
 name: backend deploy
 on:
