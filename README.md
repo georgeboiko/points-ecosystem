@@ -14,7 +14,7 @@
 
 В приложении реализована следующая микросервисная архитектура:
 
-![[docs/architecture.png|800]]
+![architecture.png](./architecture.png)
 
 1. **API Gateway** - общая точка входа в приложение. Взаимодействует с клиентом по REST API и WebSockets.
 	Gateway выполняет следующие функции:
